@@ -2,5 +2,4 @@
 
 This Project will consume Riot's API and feed a FrontEnd.
 
-The goal is to display all current active players in a match.
-We should be able to visualize KDA, Winrate, weaknesses, ranked, etc.
+The goal is to display Stats for a Player while trying to help based on the average of the upper rank.
