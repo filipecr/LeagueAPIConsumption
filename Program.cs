@@ -15,9 +15,16 @@ namespace LeagueAPIConsumption
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-           
 
-            builder.Services.AddHttpClient<IRiotApiService, RiotApiService>();
+
+            builder.Services.AddHttpClient(); 
+            builder.Services.AddScoped<IRiotApiService, RiotApiService>(); 
+            builder.Services.AddScoped<IChampionService, ChampionService>();
+            builder.Services.AddScoped<IStatsService, StatsService>();
+
+
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 

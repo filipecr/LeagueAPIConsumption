@@ -8,17 +8,21 @@ namespace LeagueAPIConsumption.Controllers
     [Route("api/[controller]")]
     public class SummonerController : ControllerBase
     {
-        private readonly IRiotApiService _battleService;
+        private readonly IRiotApiService _riotApiService;
+        private readonly IChampionService _championService;
+        private readonly IStatsService _statsService;
 
-        public SummonerController(IRiotApiService battleService)
+        public SummonerController(IRiotApiService riotApiService, IChampionService championService, IStatsService statsService)
         {
-            _battleService = battleService;
+            _riotApiService = riotApiService;
+            _championService = championService;
+            _statsService = statsService;
         }
 
         [HttpGet("summonerID")]
         public async Task<IActionResult> Get(string summonerName,string tagline)
         {
-            var result = await _battleService.GetSummonerIdByNameAsync(summonerName,tagline);
+            var result = await _riotApiService.GetSummonerIdByNameAsync(summonerName,tagline);
             return Ok(result);
         }
 
@@ -26,10 +30,29 @@ namespace LeagueAPIConsumption.Controllers
 
         public async Task<IActionResult> GetMatchInfo(string summonerName, string tagline, string region)
         {
-            var resultId = await _battleService.GetSummonerIdByNameAsync(summonerName, tagline);
+            var resultId = await _riotApiService.GetSummonerIdByNameAsync(summonerName, tagline);
             string puuid = resultId.puuid;
-            var resultCurrentGame = await _battleService.GetCurrentGameInfoAsync(puuid,region);
+            var resultCurrentGame = await _riotApiService.GetCurrentGameInfoAsync(puuid,region);
             return Ok(resultCurrentGame);
+        }
+
+        [HttpGet("TestId")]
+        
+        public async Task<IActionResult> GetChampionByKey(string key)
+        {
+            var result = await _championService.GetChampionNameByKeyAsync(key);
+            return Ok(result);
+        }
+
+        [HttpGet("GetWinrate")]
+
+        public async Task<IActionResult> GetWinrate(string summonerName, string tagline)
+        {
+            var resultId = await _riotApiService.GetSummonerIdByNameAsync(summonerName, tagline);
+            string puuid = resultId.puuid;
+            var winrate =  await _statsService.GetWinRateAsync(puuid);
+
+            return Ok(winrate);
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace LeagueAPIConsumption.Models
+﻿namespace LeagueAPIConsumption.DTO.LiveMatch
 {
     public class Observer
     {

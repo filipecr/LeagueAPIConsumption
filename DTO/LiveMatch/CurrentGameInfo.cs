@@ -1,4 +1,6 @@
-﻿namespace LeagueAPIConsumption.Models
+﻿using LeagueAPIConsumption.Models;
+
+namespace LeagueAPIConsumption.DTO.LiveMatch
 {
     public class CurrentGameInfo
     {
@@ -11,7 +13,7 @@
         public string GameMode { get; set; }
         public BannedChampion[] BannedChampions { get; set; }
         public Observer Observers { get; set; }
-        public Participant[] Participants { get; set; }
+        public CurrentGameParticipant[] Participants { get; set; }
         public long GameQueueConfigId { get; set; }
     }
 }
