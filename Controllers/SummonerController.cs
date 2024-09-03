@@ -17,32 +17,7 @@ namespace LeagueAPIConsumption.Controllers
             _riotApiService = riotApiService;
             _championService = championService;
             _statsService = statsService;
-        }
-
-        [HttpGet("summonerID")]
-        public async Task<IActionResult> Get(string summonerName,string tagline)
-        {
-            var result = await _riotApiService.GetSummonerIdByNameAsync(summonerName,tagline);
-            return Ok(result);
-        }
-
-        [HttpGet("GetMatch")]
-
-        public async Task<IActionResult> GetMatchInfo(string summonerName, string tagline, string region)
-        {
-            var resultId = await _riotApiService.GetSummonerIdByNameAsync(summonerName, tagline);
-            string puuid = resultId.puuid;
-            var resultCurrentGame = await _riotApiService.GetCurrentGameInfoAsync(puuid,region);
-            return Ok(resultCurrentGame);
-        }
-
-        [HttpGet("TestId")]
-        
-        public async Task<IActionResult> GetChampionByKey(string key)
-        {
-            var result = await _championService.GetChampionNameByKeyAsync(key);
-            return Ok(result);
-        }
+        }       
 
         [HttpGet("GetWinrate")]
 

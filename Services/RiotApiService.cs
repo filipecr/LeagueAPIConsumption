@@ -88,16 +88,42 @@ namespace LeagueAPIConsumption.Services
 
         public async Task<List<MatchDto>> FetchMatchListBySummonerAsync(string puuid)
         {
-            var matchHistoryIds = await GetMatchesbySummonerID(puuid);
+            // Retrieve match history IDs based on the summoner's PUUID
+            List<string> matchHistoryIds = await GetMatchesbySummonerID(puuid);
+
+            // Initialize a list to hold the tasks that will fetch match details
             var tasks = new List<Task<MatchDto>>();
 
-            foreach (var item in matchHistoryIds)
+            try
             {
-                tasks.Add(FetchMatchDetailsAsync(item));
+                // Iterate over each match ID and initiate a task to fetch match details
+                foreach (var matchId in matchHistoryIds)
+                {
+                    // Add the task to the list of tasks
+                    tasks.Add(FetchMatchDetailsAsync(matchId));
+                }
+
+                // Wait for all tasks to complete and gather the results
+                var matches = await Task.WhenAll(tasks);
+
+                // Filter out any null results (in case some matches couldn't be fetched) and return the list
+                return matches.Where(match => match != null).ToList();
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request error: {httpEx.Message}");
+            }
+            catch (JsonException jsonEx)
+            {
+                Console.WriteLine($"JSON Deserialization error: {jsonEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
 
-            var matches = await Task.WhenAll(tasks);
-            return matches.Where(match => match != null).ToList();
+            return new List<MatchDto>();
+
         }
 
         public async Task<MatchDto> FetchMatchDetailsAsync(string matchId)
@@ -111,20 +137,15 @@ namespace LeagueAPIConsumption.Services
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
 
                 // Check if the response was successful
-                if (response.IsSuccessStatusCode)
-                {
-                    string content = await response.Content.ReadAsStringAsync();
-                    // Deserialize the response content into a MatchDto object
-                    if (!string.IsNullOrEmpty(content))
-                    {
-                       var matchDto = JsonConvert.DeserializeObject<MatchDto>(content);
-                        return matchDto;
-                    }                 
-                }
-                else
-                {
-                    throw new Exception($"Failed to retrieve match details. HTTP Status: {response.StatusCode}");
-                }
+                response.EnsureSuccessStatusCode();
+
+                string content = await response.Content.ReadAsStringAsync();
+                
+                // Deserialize the response content into a MatchDto object
+               var matchDto = JsonConvert.DeserializeObject<MatchDto>(content);
+                return matchDto;
+
+
             }
             catch (HttpRequestException httpEx)
             {
@@ -138,8 +159,6 @@ namespace LeagueAPIConsumption.Services
             {
                 throw new Exception($"An unexpected error occurred: {ex.Message}");
             }
-
-            return null; // Return null if something goes wrong
         }
 
 

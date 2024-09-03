@@ -33,10 +33,9 @@ namespace LeagueAPIConsumption.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching DDragon data: {ex.Message}");
-                return new Dictionary<string, JObject>(); // Return an empty dictionary in case of an error
+                throw new Exception($"Error fetching DDragon data: {ex.Message}");
             }
-
+            
         }
 
         public async Task<string> GetChampionNameByKeyAsync(string key)
