@@ -40,18 +40,17 @@ namespace LeagueAPIConsumption.Services
 
         public async Task<string> GetChampionNameByKeyAsync(string key)
         {
-            var champions = await GetLatestChampionList();
-            foreach (var champion in champions)
-            {
-                // Check if the champion's "key" matches the provided key
-                if (champion.Value["key"]?.ToString() == key)
-                {
-                    return champion.Key; // Return the name of the champion
-                }
-            }
+                var champions = await GetLatestChampionList();
 
-            // Return null or throw an exception if not found
-            return null;
+                var champion = champions.FirstOrDefault(c => c.Value["key"]?.ToString() == key);
+
+                
+                if (!string.IsNullOrEmpty(champion.Key))
+                {
+                    return champion.Key;
+                }
+
+                throw new KeyNotFoundException($"Champion with key '{key}' not found.");
         }
     }
 }
